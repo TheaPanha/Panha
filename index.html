@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="km">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>ស្នាដៃសិប្បកម្មខ្មែរ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@500;600;700&family=Noto+Sans+Khmer:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<style>
+  :root {
+    --linen: #F1E5D0;
+    --card: #FFFCF6;
+    --border: #E2CFA5;
+    --ink: #241B12;
+    --muted: #8A7458;
+    --clay: #A63F27;
+    --moss: #4B6B4A;
+    --brass: #B98A3E;
+  }
+  * { box-sizing: border-box; }
+  html, body, * { touch-action: pan-x pan-y; }
+  body {
+    margin: 0;
+    background: var(--linen);
+    color: var(--ink);
+    font-family: "Noto Sans Khmer", -apple-system, sans-serif;
+  }
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+  header { margin-bottom: 28px; }
+  h1 {
+    font-family: "Noto Serif Khmer", Georgia, serif;
+    font-weight: 600;
+    font-size: 30px;
+    margin: 0 0 6px 0;
+    color: var(--ink);
+  }
+  .tagline {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .rule {
+    height: 3px;
+    width: 56px;
+    background: var(--clay);
+    border-radius: 2px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .card {
+    position: relative;
+    height: 270px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 26px rgba(36,27,18,0.16);
+    display: flex;
+    flex-direction: column;
+  }
+  .photo-slot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #E9DBC0;
+    overflow: hidden;
+    z-index: 0;
+    cursor: pointer;
+  }
+  .photo-slot .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .body {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(to top, rgba(24,17,10,0.82) 0%, rgba(24,17,10,0.32) 55%, rgba(24,17,10,0.02) 100%);
+  }
+  .body h3 {
+    font-family: "Noto Serif Khmer", Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+    color: #FBF4E6;
+  }
+  .price {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #E3BE7E;
+    margin: 0 0 12px 0;
+  }
+  .buy-btn {
+    margin-top: auto;
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    background: var(--ink);
+    color: var(--linen);
+    transition: background 0.25s ease, transform 0.15s ease;
+  }
+  .buy-btn:hover { background: var(--clay); }
+  .buy-btn:active { transform: scale(0.98); }
+  .buy-btn.added { background: var(--moss); }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(24,17,10,0.88);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    opacity: 0;
+    animation: fadeIn 0.25s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .lightbox-close,
+  .lightbox-download {
+    position: absolute;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: none;
+    background: var(--linen);
+    color: var(--ink);
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+  .lightbox-close:hover,
+  .lightbox-download:hover { background: #fff; }
+  .lightbox-close { right: 24px; }
+  .lightbox-download { right: 74px; }
+  .order-modal {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(24,17,10,0.7);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .order-modal.open { display: flex; }
+  .order-box {
+    width: 100%; max-width: 360px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  .order-box h2 {
+    font-family: "Noto Serif Khmer", Georgia, serif;
+    font-size: 18px; margin: 0 0 6px 0;
+  }
+  .order-product { margin: 0 0 14px 0; font-size: 14px; color: var(--clay); font-weight: 600; }
+  .order-box input {
+    width: 100%; margin-bottom: 10px; padding: 11px 12px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: #fff; color: var(--ink);
+    font-family: inherit; font-size: 16px;
+  }
+  .order-status { min-height: 20px; margin-bottom: 10px; font-size: 13px; color: var(--muted); }
+  .order-status.ok { color: var(--moss); }
+  .order-status.err { color: var(--clay); }
+  .order-actions { display: flex; gap: 8px; }
+  .order-actions button {
+    flex: 1; padding: 11px; border: none; border-radius: 999px;
+    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .order-cancel { background: var(--border); color: var(--ink); }
+  .order-send { background: var(--ink); color: var(--linen); }
+  .order-send:disabled { opacity: 0.6; }
+  @media (max-width: 640px) {
+    .wrap { padding: 20px 10px 32px; }
+    .grid { gap: 6px; }
+    .card { height: 170px; border-radius: 10px; }
+    .body { padding: 6px; }
+    .body h3 { font-size: 10px; margin-bottom: 3px; }
+    .price { font-size: 9px; margin-bottom: 6px; }
+    .buy-btn { padding: 6px 2px; font-size: 9px; gap: 3px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>ស្នាដៃសិប្បកម្មខ្មែរ</h1>
+      <p class="tagline">ជ្រើសរើសសិប្បកម្មដែលត្បាញ និងផលិតដោយដៃពីសិប្បករក្នុងស្រុក</p>
+      <div class="rule"></div>
+    </header>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <a class="lightbox-download" id="lightbox-download" download><i class="fa-solid fa-download"></i></a>
+    <button class="lightbox-close" id="lightbox-close"><i class="fa-solid fa-xmark"></i></button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <div class="order-modal" id="order-modal">
+    <div class="order-box">
+      <h2>បញ្ជាក់ការកម្មង់</h2>
+      <p class="order-product" id="order-product"></p>
+      <input id="order-name" type="text" placeholder="ឈ្មោះរបស់អ្នក" autocomplete="name" />
+      <input id="order-phone" type="tel" placeholder="លេខទូរស័ព្ទ" autocomplete="tel" />
+      <div class="order-status" id="order-status"></div>
+      <div class="order-actions">
+        <button class="order-cancel" id="order-cancel" type="button">បោះបង់</button>
+        <button class="order-send" id="order-send" type="button">ផ្ញើការកម្មង់</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+// ដាក់ URL នៃ Cloudflare Worker របស់អ្នកនៅទីនេះ (មើលឯកសារ worker.js)
+const ORDER_ENDPOINT = "https://YOUR-WORKER.workers.dev";
+
+const PRODUCTS = [
+  { name: "ក្រមាកម្ពុជា", place: "ត្បាញនៅសៀមរាប", price: 45000 },
+  { name: "អាវប៉ូឡូពាក់កណ្តាលហោប៉ៅ", place: "ស្តុកជូតបាន", price: 68000 },
+  { name: "កន្សែងសូត្រ", place: "ត្បាញនៅតាកែវ", price: 120000 },
+  { name: "ចានដីឥដ្ឋ", place: "ដុតនៅកំពង់ឆ្នាំង", price: 25000 },
+  { name: "ថូដៃត្បាញ", place: "ត្បាញនៅសៀមរាប", price: 55000 },
+  { name: "កំបិតដែកលឿង", place: "ដុសនៅបាត់ដំបង", price: 95000 },
+  { name: "អំបុកឫស្សី", place: "ត្បាញនៅតាកែវ", price: 18000 },
+  { name: "ស្បែកជើងស្បែកគោ", place: "ធ្វើនៅភ្នំពេញ", price: 150000 },
+  { name: "ភួយសូត្រ", place: "ត្បាញនៅតាកែវ", price: 210000 },
+  { name: "ខ្សែក", place: "ត្បាញនៅសៀមរាប", price: 15000 },
+  { name: "ចានឫស្សី", place: "ត្បាញនៅកំពង់ចាម", price: 28000 },
+  { name: "ស្រោមខ្នើយត្បាញ", place: "ត្បាញនៅតាកែវ", price: 40000 },
+  { name: "ចង្ក្រានដីឥដ្ឋ", place: "ដុតនៅកំពង់ឆ្នាំង", price: 60000 },
+  { name: "កាបូបស្បែក", place: "ធ្វើនៅភ្នំពេញ", price: 175000 },
+  { name: "អាវក្រណាត់ត្បាញ", place: "ត្បាញនៅតាកែវ", price: 85000 },
+  { name: "ចានឆ្នាំងឪឡឺក", place: "ដុតនៅកំពង់ឆ្នាំង", price: 22000 },
+  { name: "ថង់ស្មារឫស្សី", place: "ត្បាញនៅកំពង់ចាម", price: 38000 },
+  { name: "កម្រាលពូក", place: "ត្បាញនៅសៀមរាប", price: 130000 },
+  { name: "ខ្សែក្រវ៉ាត់ស្បែក", place: "ធ្វើនៅភ្នំពេញ", price: 48000 },
+  { name: "មួកបួង", place: "ត្បាញនៅសៀមរាប", price: 20000 },
+  { name: "ស្បោងរុំអំបោះ", place: "ត្បាញនៅតាកែវ", price: 35000 },
+  { name: "សំពត់ហូល", place: "ត្បាញនៅតាកែវ", price: 180000 },
+  { name: "ឆ្នាំងដីតូច", place: "ដុតនៅកំពង់ឆ្នាំង", price: 30000 },
+  { name: "កន្ត្រកឫស្សី", place: "ត្បាញនៅកំពង់ចាម", price: 32000 },
+  { name: "រូបចម្លាក់ឈើ", place: "ឆ្លាក់នៅសៀមរាប", price: 140000 },
+  { name: "កាបូបត្បាញដៃ", place: "ត្បាញនៅសៀមរាប", price: 65000 },
+  { name: "ខ្សែដៃអំបោះ", place: "ត្បាញនៅតាកែវ", price: 12000 },
+  { name: "ក្រមាសូត្រ", place: "ត្បាញនៅតាកែវ", price: 90000 },
+  { name: "ចានស្មូនដីឥដ្ឋ", place: "ដុតនៅកំពង់ឆ្នាំង", price: 42000 },
+  { name: "ស្បែកជើងត្បាញ", place: "ធ្វើនៅភ្នំពេញ", price: 58000 },
+  { name: "កន្សែងកប្បាស", place: "ត្បាញនៅសៀមរាប", price: 26000 },
+  { name: "ថូដីស្អិតក្បាច់", place: "ដុតនៅកំពង់ឆ្នាំង", price: 52000 },
+];
+
+const formatRiel = (n) => n.toLocaleString("en-US") + " ៛";
+
+function render() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  PRODUCTS.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="photo-slot">
+        <img class="preview-img" src="Example${i + 1}.jpg" alt="${item.name}" />
+      </div>
+      <div class="body">
+        <h3>${item.name}</h3>
+        <span class="price">${formatRiel(item.price)}</span>
+        <button class="buy-btn">
+          <i class="fa-solid fa-comment-dots"></i>
+          <span class="label">ឆាតកម្មង់</span>
+        </button>
+      </div>
+    `;
+
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".buy-btn")) return;
+      const lightboxImg = document.getElementById("lightbox-img");
+      const lightboxDownload = document.getElementById("lightbox-download");
+      const imgSrc = `Example${i + 1}.jpg`;
+      lightboxImg.src = imgSrc;
+      lightboxImg.alt = item.name;
+      lightboxImg.style.animation = "none";
+      void lightboxImg.offsetWidth;
+      lightboxImg.style.animation = "";
+      lightboxDownload.href = imgSrc;
+      lightboxDownload.setAttribute("download", `${item.name}.jpg`);
+      document.getElementById("lightbox").classList.add("open");
+    });
+
+    card.querySelector(".buy-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      openOrder(item);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+render();
+
+// ---------- Order modal ----------
+let currentItem = null;
+const orderModal = document.getElementById("order-modal");
+const orderStatus = document.getElementById("order-status");
+const orderSend = document.getElementById("order-send");
+
+function openOrder(item) {
+  currentItem = item;
+  document.getElementById("order-product").textContent = `${item.name} · ${formatRiel(item.price)}`;
+  orderStatus.textContent = "";
+  orderStatus.className = "order-status";
+  orderSend.disabled = false;
+  orderModal.classList.add("open");
+}
+function closeOrder() { orderModal.classList.remove("open"); }
+
+document.getElementById("order-cancel").addEventListener("click", closeOrder);
+orderModal.addEventListener("click", (e) => { if (e.target === orderModal) closeOrder(); });
+
+orderSend.addEventListener("click", async () => {
+  const name = document.getElementById("order-name").value.trim();
+  const phone = document.getElementById("order-phone").value.trim();
+  if (!name || !phone) {
+    orderStatus.textContent = "សូមបំពេញឈ្មោះ និងលេខទូរស័ព្ទ";
+    orderStatus.className = "order-status err";
+    return;
+  }
+  orderSend.disabled = true;
+  orderStatus.textContent = "កំពុងផ្ញើ...";
+  orderStatus.className = "order-status";
+  try {
+    const res = await fetch(ORDER_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product: currentItem.name, price: formatRiel(currentItem.price), name, phone })
+    });
+    if (!res.ok) throw new Error("bad status");
+    orderStatus.textContent = "បានផ្ញើការកម្មង់រួចរាល់! យើងនឹងទាក់ទងអ្នកឆាប់ៗ។";
+    orderStatus.className = "order-status ok";
+    setTimeout(closeOrder, 1800);
+  } catch (err) {
+    orderStatus.textContent = "ផ្ញើមិនបាន សូមព្យាយាមម្តងទៀត";
+    orderStatus.className = "order-status err";
+    orderSend.disabled = false;
+  }
+});
+
+// Block double-tap zoom
+let lastTouchEnd = 0;
+document.addEventListener("touchend", (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd < 300) e.preventDefault();
+  lastTouchEnd = now;
+}, { passive: false });
+
+// Block pinch-zoom (iOS Safari ignores user-scalable)
+["gesturestart", "gesturechange", "gestureend"].forEach((ev) =>
+  document.addEventListener(ev, (e) => e.preventDefault())
+);
+
+const lightbox = document.getElementById("lightbox");
+document.getElementById("lightbox-close").addEventListener("click", () => {
+  lightbox.classList.remove("open");
+});
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) lightbox.classList.remove("open");
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") lightbox.classList.remove("open");
+});
+</script>
+</body>
+</html>
